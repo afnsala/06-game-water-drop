@@ -118,6 +118,69 @@ body {
     color: var(--cw-blue);
 }
 
+.goal {
+    flex: 0 1 auto;
+    font-family: 'Poppins', 'Nunito Sans', Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cw-black);
+}
+
+.goal span {
+    color: var(--cw-green-dark);
+}
+
+.difficulty-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.difficulty-label {
+    font-family: 'Poppins', 'Nunito Sans', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--cw-gray);
+}
+
+.difficulty-group {
+    display: flex;
+    gap: 8px;
+}
+
+.difficulty-btn {
+    padding: 8px 18px;
+    border: 2px solid var(--cw-light-blue);
+    border-radius: 20px;
+    background-color: #fff;
+    color: var(--cw-black);
+    font-family: 'Poppins', 'Nunito Sans', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.difficulty-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background-color: #eaf7f5;
+}
+
+.difficulty-btn.active {
+    background-color: var(--cw-blue);
+    border-color: var(--cw-blue);
+    color: #fff;
+}
+
+.difficulty-btn:disabled {
+    cursor: default;
+    opacity: 0.55;
+    transform: none;
+}
+
 #game-container {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -310,9 +373,14 @@ body {
         text-align: center;
     }
 
-    .score, .timer {
+    .score, .timer, .goal {
         font-size: 18px;
         text-align: center;
+    }
+
+    .difficulty-panel {
+        flex-direction: column;
+        gap: 8px;
     }
 
     #start-btn {

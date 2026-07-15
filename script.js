@@ -1,3 +1,12 @@
+// ----- Difficulty settings -----
+// Each mode tunes the goal, pace, and risk of the game
+const difficulties = {
+  easy:   { time: 40, winScore: 15, spawnRate: 1200, badDropChance: 0.15 },
+  normal: { time: 30, winScore: 20, spawnRate: 1000, badDropChance: 0.20 },
+  hard:   { time: 20, winScore: 25, spawnRate: 800,  badDropChance: 0.30 }
+};
+let currentDifficulty = "normal"; // default mode
+
 // ----- Game state -----
 let gameRunning = false;   // Whether the game is currently active
 let dropMaker;             // Interval that spawns new drops
@@ -8,9 +17,11 @@ let timeLeft = 30;         // Seconds remaining
 // Cache elements we touch often
 const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
+const goalEl = document.getElementById("goal");
 const startBtn = document.getElementById("start-btn");
 const resetBtn = document.getElementById("reset-btn");
 const gameContainer = document.getElementById("game-container");
+const difficultyBtns = document.querySelectorAll(".difficulty-btn");
 
 // Messages shown when the game ends
 const winMessages = [
@@ -31,27 +42,60 @@ const loseMessages = [
 startBtn.addEventListener("click", startGame);
 resetBtn.addEventListener("click", resetGame);
 
+// Handle difficulty selection
+difficultyBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (gameRunning) return; // don't allow switching mid-round
+
+    currentDifficulty = btn.dataset.level;
+
+    difficultyBtns.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    updateGoalAndTimeDisplay();
+  });
+});
+
+function updateGoalAndTimeDisplay() {
+  const settings = difficulties[currentDifficulty];
+  goalEl.textContent = settings.winScore;
+  timeEl.textContent = settings.time;
+}
+
+// Set initial display to match the default difficulty
+updateGoalAndTimeDisplay();
+
 function startGame() {
   // Prevent multiple games from running at once
   if (gameRunning) return;
 
+  const settings = difficulties[currentDifficulty];
+
   gameRunning = true;
   score = 0;
-  timeLeft = 30;
+  timeLeft = settings.time;
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
+  goalEl.textContent = settings.winScore;
 
   startBtn.disabled = true;
   startBtn.textContent = "Game in Progress...";
+  setDifficultyButtonsDisabled(true);
 
   clearDrops();
   removeEndMessage();
 
-  // Create new drops every second (1000 milliseconds)
-  dropMaker = setInterval(createDrop, 1000);
+  // Create new drops at a pace set by the current difficulty
+  dropMaker = setInterval(createDrop, settings.spawnRate);
 
   // Tick the countdown timer every second
   timerInterval = setInterval(updateTimer, 1000);
+}
+
+function setDifficultyButtonsDisabled(disabled) {
+  difficultyBtns.forEach((btn) => {
+    btn.disabled = disabled;
+  });
 }
 
 function updateTimer() {
@@ -72,6 +116,7 @@ function endGame() {
   startBtn.disabled = false;
   startBtn.textContent = "Start Game";
   resetBtn.disabled = false;
+  setDifficultyButtonsDisabled(false);
 
   showEndMessage();
 }
@@ -86,14 +131,17 @@ function resetGame() {
   clearDrops();
   removeEndMessage();
 
+  const settings = difficulties[currentDifficulty];
   score = 0;
-  timeLeft = 30;
+  timeLeft = settings.time;
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
+  goalEl.textContent = settings.winScore;
 
   startBtn.disabled = false;
   startBtn.textContent = "Start Game";
   resetBtn.disabled = false;
+  setDifficultyButtonsDisabled(false);
 
   startGame();
 }
@@ -103,7 +151,8 @@ function clearDrops() {
 }
 
 function showEndMessage() {
-  const won = score >= 20;
+  const winScore = difficulties[currentDifficulty].winScore;
+  const won = score >= winScore;
   const messages = won ? winMessages : loseMessages;
   const message = messages[Math.floor(Math.random() * messages.length)];
 
@@ -128,8 +177,8 @@ function createDrop() {
   // Create a new div element that will be our water drop
   const drop = document.createElement("div");
 
-  // About 1 in 5 drops is a "bad" drop to avoid
-  const isBad = Math.random() < 0.2;
+  // Chance of a "bad" drop depends on the current difficulty
+  const isBad = Math.random() < difficulties[currentDifficulty].badDropChance;
   drop.className = isBad ? "water-drop bad-drop" : "water-drop";
 
   // Make drops different sizes for visual variety

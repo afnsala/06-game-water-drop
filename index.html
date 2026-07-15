@@ -14,9 +14,19 @@
         <div class="score-panel">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="timer">Time: <span id="time">30</span>s</div>
+            <div class="goal">Goal: <span id="goal">20</span> drops</div>
             <div class="button-group">
                 <button id="reset-btn" type="button">Reset</button>
                 <button id="start-btn">Start Game</button>
+            </div>
+        </div>
+
+        <div class="difficulty-panel">
+            <span class="difficulty-label">Difficulty:</span>
+            <div class="difficulty-group">
+                <button class="difficulty-btn" data-level="easy" type="button">Easy</button>
+                <button class="difficulty-btn active" data-level="normal" type="button">Normal</button>
+                <button class="difficulty-btn" data-level="hard" type="button">Hard</button>
             </div>
         </div>
         
