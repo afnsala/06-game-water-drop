@@ -342,6 +342,46 @@ body {
     to { opacity: 1; }
 }
 
+.game-footer {
+    width: 100%;
+    text-align: center;
+    padding-top: 4px;
+}
+
+.game-footer p {
+    font-size: 14px;
+    color: var(--cw-gray);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.game-footer a {
+    color: var(--cw-blue-dark);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.game-footer p a:hover {
+    text-decoration: underline;
+}
+
+.donate-link {
+    display: inline-block;
+    padding: 10px 26px;
+    background-color: var(--cw-yellow);
+    color: var(--cw-black) !important;
+    border-radius: 8px;
+    font-family: 'Poppins', 'Nunito Sans', Arial, sans-serif;
+    font-size: 13px;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.donate-link:hover {
+    background-color: #e6b400;
+    transform: translateY(-1px);
+    text-decoration: none !important;
+}
+
 /* ----- Responsive layout ----- */
 @media (max-width: 850px) {
     .game-wrapper {
@@ -393,5 +433,13 @@ body {
 
     .end-message-card h2 {
         font-size: 24px;
+    }
+
+    .game-footer p {
+        font-size: 13px;
+    }
+
+    .donate-link {
+        width: 100%;
     }
 }
