@@ -7,6 +7,16 @@ const difficulties = {
 };
 let currentDifficulty = "normal"; // default mode
 
+// ----- Milestones -----
+// Percent is relative to the current difficulty's winScore, so milestones
+// scale correctly across Easy/Normal/Hard
+const milestones = [
+  { percent: 0.5, message: "Halfway there!" },
+  { percent: 1.0, message: "Goal reached — keep going!" }
+];
+let firedMilestones = new Set();
+let milestoneTimeout;
+
 // ----- Sound effects -----
 const sounds = {
   gameStart: new Audio("sound_effects/game_start.mp3"),
@@ -40,6 +50,7 @@ const startBtn = document.getElementById("start-btn");
 const resetBtn = document.getElementById("reset-btn");
 const gameContainer = document.getElementById("game-container");
 const difficultyBtns = document.querySelectorAll(".difficulty-btn");
+const milestoneToast = document.getElementById("milestone-toast");
 
 // Messages shown when the game ends
 const winMessages = [
@@ -111,6 +122,8 @@ function startGame() {
 
   clearDrops();
   removeEndMessage();
+  firedMilestones.clear();
+  hideMilestoneToast();
 
   // Create new drops at a pace set by the current difficulty
   dropMaker = setInterval(createDrop, settings.spawnRate);
@@ -157,6 +170,8 @@ function resetGame() {
   gameRunning = false;
   clearDrops();
   removeEndMessage();
+  firedMilestones.clear();
+  hideMilestoneToast();
 
   const settings = difficulties[currentDifficulty];
   score = 0;
@@ -201,6 +216,32 @@ function removeEndMessage() {
   if (existing) existing.remove();
 }
 
+function checkMilestones() {
+  const winScore = difficulties[currentDifficulty].winScore;
+
+  milestones.forEach((milestone, index) => {
+    if (firedMilestones.has(index)) return;
+
+    const threshold = Math.round(milestone.percent * winScore);
+    if (score >= threshold) {
+      firedMilestones.add(index);
+      showMilestoneToast(milestone.message);
+    }
+  });
+}
+
+function showMilestoneToast(message) {
+  milestoneToast.textContent = message;
+  milestoneToast.classList.add("show");
+
+  clearTimeout(milestoneTimeout);
+  milestoneTimeout = setTimeout(hideMilestoneToast, 1800);
+}
+
+function hideMilestoneToast() {
+  milestoneToast.classList.remove("show");
+}
+
 function createDrop() {
   // Create a new div element that will be our water drop
   const drop = document.createElement("div");
@@ -234,6 +275,7 @@ function createDrop() {
     } else {
       playSound(sounds.waterDrop);
       score++;
+      checkMilestones();
     }
     scoreEl.textContent = score;
     drop.remove();
