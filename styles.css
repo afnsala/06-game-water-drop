@@ -44,11 +44,18 @@ stands in for Avenir, the brand's secondary font.)
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
     background-color: #f5faff;
     background-image: radial-gradient(circle at 10% 10%, rgba(46, 157, 247, 0.06) 0, transparent 45%),
                        radial-gradient(circle at 90% 90%, rgba(255, 201, 7, 0.08) 0, transparent 45%);
@@ -220,6 +227,7 @@ body {
 
 .button-group {
     display: flex;
+    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
 }
@@ -293,7 +301,7 @@ body {
 }
 
 .bad-drop {
-    background-color: var(--cw-green-dark);
+    background-color: var(--cw-red);
 }
 
 .end-message {
@@ -448,7 +456,13 @@ body {
         gap: 8px;
     }
 
-    #start-btn {
+    .button-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #start-btn,
+    #reset-btn {
         width: 100%;
     }
 
