@@ -269,7 +269,7 @@ body {
 }
 
 .bad-drop {
-    background-color: var(--cw-green);
+    background-color: var(--cw-green-dark);
 }
 
 .end-message {

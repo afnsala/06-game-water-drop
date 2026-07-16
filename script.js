@@ -7,6 +7,24 @@ const difficulties = {
 };
 let currentDifficulty = "normal"; // default mode
 
+// ----- Sound effects -----
+const sounds = {
+  gameStart: new Audio("sound_effects/game_start.mp3"),
+  buttonPress: new Audio("sound_effects/button_press.mp3"),
+  waterDrop: new Audio("sound_effects/water_drop.mp3"),
+  badDrop: new Audio("sound_effects/bad_drop.mp3"),
+  winGame: new Audio("sound_effects/win_game.mp3"),
+  loseGame: new Audio("sound_effects/lose_game.mp3")
+};
+
+function playSound(sound) {
+  // Restart from the beginning in case it's still playing (e.g. rapid clicks)
+  sound.currentTime = 0;
+  sound.play().catch(() => {
+    // Ignore errors from browsers blocking autoplay before user interaction
+  });
+}
+
 // ----- Game state -----
 let gameRunning = false;   // Whether the game is currently active
 let dropMaker;             // Interval that spawns new drops
@@ -39,14 +57,21 @@ const loseMessages = [
 ];
 
 // Wait for button click to start the game
-startBtn.addEventListener("click", startGame);
-resetBtn.addEventListener("click", resetGame);
+startBtn.addEventListener("click", () => {
+  playSound(sounds.buttonPress);
+  startGame();
+});
+resetBtn.addEventListener("click", () => {
+  playSound(sounds.buttonPress);
+  resetGame();
+});
 
 // Handle difficulty selection
 difficultyBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     if (gameRunning) return; // don't allow switching mid-round
 
+    playSound(sounds.buttonPress);
     currentDifficulty = btn.dataset.level;
 
     difficultyBtns.forEach((b) => b.classList.remove("active"));
@@ -70,6 +95,8 @@ function startGame() {
   if (gameRunning) return;
 
   const settings = difficulties[currentDifficulty];
+
+  playSound(sounds.gameStart);
 
   gameRunning = true;
   score = 0;
@@ -153,6 +180,7 @@ function clearDrops() {
 function showEndMessage() {
   const winScore = difficulties[currentDifficulty].winScore;
   const won = score >= winScore;
+  playSound(won ? sounds.winGame : sounds.loseGame);
   const messages = won ? winMessages : loseMessages;
   const message = messages[Math.floor(Math.random() * messages.length)];
 
@@ -201,8 +229,10 @@ function createDrop() {
     if (!gameRunning) return;
 
     if (isBad) {
+      playSound(sounds.badDrop);
       score = Math.max(0, score - 1);
     } else {
+      playSound(sounds.waterDrop);
       score++;
     }
     scoreEl.textContent = score;
